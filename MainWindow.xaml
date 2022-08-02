@@ -12,7 +12,6 @@
                 <TextBox x:Name="Txt_SelectedPath" Width="300" Height="30"/>
                 <Button x:Name="Btn_SelectFile" Width="100" Height="30" Content="Select File" Click="OnClick_SelectFile"/>
             </StackPanel>
-            <Button x:Name="Btn_Convert" Width="100" Height="30" Content="Convert" Click="OnClick_Convert"/>
             <Button x:Name="Btn_SaveAs" Width="100" Height="30" Content="Save As" Click="OnClick_SaveAs"/>
         </StackPanel>
     </Grid>

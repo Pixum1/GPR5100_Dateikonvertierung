@@ -11,88 +11,63 @@ namespace GPR5100_Dateikonvertierung
     public partial class MainWindow : Window
     {
         string selectedFilePath;
-        string convertedFileContent;
+        string fileFormat = "All Files|*.*";
 
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        private string GetFileContent()
-        {
-            try
-            {
-                using (StreamReader reader = new StreamReader(selectedFilePath))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-            catch (Exception _e)
-            {
-                ShowError(_e.Message);
-                return _e.Message;
-            }
-        }
-        private void WriteContentToFile(string _content, string _path)
-        {
-            try
-            {
-                using (StreamWriter writer = new StreamWriter(File.OpenWrite(_path), Encoding.Default))
-                {
-                    writer.WriteLine(_content);
-                }
-            }
-            catch (Exception _e)
-            {
-                ShowError(_e.Message);
-            }
-        }
-
-        private byte[] ConvertStringToByteArray(string _string)
-        {
-            return Encoding.Default.GetBytes(_string);
-
-            //UTF32Encoding encoder = new UTF32Encoding();
-            //return encoder.GetBytes(_string);
-        }
-        private string ConvertByteArrayToString(byte[] _bytes)
-        {
-            return Encoding.Default.GetString(_bytes);
-
-            //UTF32Encoding encoder = new UTF32Encoding();
-            //return encoder.GetString(_bytes);
-        }
-
-        private void OnClick_Convert(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(selectedFilePath)) return;
-
-                convertedFileContent = ConvertByteArrayToString(ConvertStringToByteArray(GetFileContent()));
-
-                MessageBox.Show("Succesfully converted");
-            }
-            catch (Exception _e)
-            {
-                ShowError(_e.Message);
-            }
-        }
-
         private void OnClick_SaveAs(object sender, RoutedEventArgs e)
         {
             try
             {
                 Microsoft.Win32.SaveFileDialog saveDlg = new Microsoft.Win32.SaveFileDialog();
-                saveDlg.Filter = "TXT Files (.txt)|*.txt|PNG Files (.png)|*.png";
+
+                if (Path.GetExtension(selectedFilePath) == ".txt")
+                    saveDlg.Filter = fileFormat;
+                else
+                    saveDlg.Filter = "TXT Files|*.txt";
+
                 saveDlg.ShowDialog();
 
-                WriteContentToFile(convertedFileContent, saveDlg.FileName);
+                if (!Path.HasExtension(saveDlg.FileName))
+                {
+                    ShowError("You have to choose a valid format!");
+                    return;
+                }
+                if (Path.GetExtension(saveDlg.FileName) == Path.GetExtension(selectedFilePath))
+                {
+                    ShowError("You can't convert to the same file format!");
+                    return;
+                }
+
+                if (Path.GetExtension(saveDlg.FileName) == ".txt")
+                {
+                    string msg = Convert.ToBase64String(File.ReadAllBytes(selectedFilePath));
+                    File.WriteAllText(saveDlg.FileName, msg);
+                }
+                else
+                {
+                    byte[] data = Convert.FromBase64String(File.ReadAllText(selectedFilePath));
+
+                    using (FileStream fs = new FileStream(saveDlg.FileName, FileMode.OpenOrCreate))
+                    {
+                        fs.Write(data, 0, data.Length);
+                        fs.Close();
+                    }
+                }
+
+                MessageBox.Show($"Succesfully converted from {Path.GetExtension(selectedFilePath)} to {Path.GetExtension(saveDlg.FileName)}");
             }
             catch (Exception _e)
             {
                 ShowError(_e.Message);
             }
+        }
+
+        byte[] GetStringData(string _string)
+        {
+            return Convert.FromBase64String(_string);
         }
 
         private void OnClick_SelectFile(object sender, RoutedEventArgs e)
@@ -100,7 +75,7 @@ namespace GPR5100_Dateikonvertierung
             try
             {
                 Microsoft.Win32.OpenFileDialog openDlg = new Microsoft.Win32.OpenFileDialog();
-                openDlg.Filter = "TXT Files (.txt)|*.txt|PNG Files (.png)|*.png";
+                openDlg.Filter = fileFormat;
                 openDlg.ShowDialog();
 
                 //if (!(System.IO.Path.GetExtension(openDlg.FileName).ToLower() == ".txt")) return;
@@ -113,7 +88,6 @@ namespace GPR5100_Dateikonvertierung
                 ShowError(_e.Message);
             }
         }
-
         private void ShowError(string _msg)
         {
             MessageBox.Show(_msg, "ERROR!");
