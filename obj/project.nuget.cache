@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Vviv2q1hLdw0LuVffomL2puH6En1/D9aJPX69Mb/vkG0XYr56TVpXfCpJJ+Ito5rgsCkfXHg+VW3E2w5HguGeA==",
+  "dgSpecHash": "QW6xqgAKqkTQmh1CArEJwgKSU/6tMtn21c95tQeXu8CLpivGaD5KxgaajqgztmHXQfzxSUWNCL/T/3HjzkAN1A==",
   "success": true,
   "projectFilePath": "D:\\Game Making\\GPR5100_Dateikonvertierung\\GPR5100_Dateikonvertierung.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\knauf\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
+    "C:\\Users\\knauf\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
